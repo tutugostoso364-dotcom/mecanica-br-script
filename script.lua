@@ -34,6 +34,7 @@ local root = char:WaitForChild("HumanoidRootPart")
 local caixas = {}
 local autoFarm = false
 local flySpeed = 600
+local noclip = false
 
 local pallet = nil
 local entrega = nil
@@ -53,7 +54,7 @@ for _, v in ipairs(workspace:GetDescendants()) do
     end
 end
 
--- 📦 PEGAR CAIXAS (SEM TRAVAR)
+-- 📦 PEGAR CAIXAS
 local function pegarTudo()
     caixas = {}
 
@@ -96,6 +97,17 @@ game:GetService("RunService").Heartbeat:Connect(function()
     end
 end)
 
+-- 🚀 NOCLIP
+game:GetService("RunService").Stepped:Connect(function()
+    if noclip and player.Character then
+        for _, v in pairs(player.Character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+            end
+        end
+    end
+end)
+
 -- 🕊️ FLY ATÉ PONTO
 local function flyTo(pos)
     local bv = Instance.new("BodyVelocity", root)
@@ -114,6 +126,8 @@ task.spawn(function()
     while true do
         if autoFarm and pallet and entrega then
             
+            noclip = true
+
             -- IR PALLET
             flyTo(pallet.Position)
             task.wait(0.5)
@@ -131,6 +145,8 @@ task.spawn(function()
             -- VOLTAR
             flyTo(pallet.Position)
             task.wait(1)
+        else
+            noclip = false
         end
 
         task.wait(0.2)
@@ -182,7 +198,7 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateToggle({
-   Name = "🤖 Auto Farm",
+   Name = "🤖 Auto Farm + Noclip",
    CurrentValue = false,
    Callback = function(v)
        autoFarm = v
