@@ -2,9 +2,9 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Mecânica BR - SEM TRAVAR",
+   Name = "Mecânica BR - AUTO FARM",
    LoadingTitle = "Carregando...",
-   LoadingSubtitle = "Modo Leve",
+   LoadingSubtitle = "Versão Completa",
 
    ConfigurationSaving = {
       Enabled = false,
@@ -14,7 +14,7 @@ local Window = Rayfield:CreateWindow({
    KeySettings = {
       Title = "Sistema de Key",
       Subtitle = "Digite a key",
-      Note = "Key necessária para usar",
+      Note = "Key necessária",
       FileName = "MecanicaBR_Key",
       SaveKey = false,
       GrabKeyFromSite = false,
@@ -32,8 +32,28 @@ local root = char:WaitForChild("HumanoidRootPart")
 
 -- VARIÁVEIS
 local caixas = {}
+local autoFarm = false
+local flySpeed = 600
 
--- 📦 PEGAR TODAS AS CAIXAS (SEM TRAVAR)
+local pallet = nil
+local entrega = nil
+
+-- 🔍 DETECTAR LOCAIS
+for _, v in ipairs(workspace:GetDescendants()) do
+    if v:IsA("BasePart") then
+        local n = v.Name:lower()
+
+        if not pallet and (n:find("pallet") or n:find("box")) then
+            pallet = v
+        end
+
+        if not entrega and (n:find("delivery") or n:find("entrega") or n:find("sell") or n:find("drop")) then
+            entrega = v
+        end
+    end
+end
+
+-- 📦 PEGAR CAIXAS (SEM TRAVAR)
 local function pegarTudo()
     caixas = {}
 
@@ -49,7 +69,7 @@ local function pegarTudo()
     end
 end
 
--- 🔄 SEGURAR CAIXAS NO PLAYER
+-- 🔄 SEGURAR CAIXAS
 game:GetService("RunService").RenderStepped:Connect(function()
     for i, v in ipairs(caixas) do
         local x = (i % 4) * 2 - 3
@@ -67,32 +87,58 @@ local function soltar()
     caixas = {}
 end
 
--- 🔍 DETECTAR ENTREGA
-local entrega = nil
-
-for _, v in ipairs(workspace:GetDescendants()) do
-    if v:IsA("BasePart") then
-        local n = v.Name:lower()
-        if n:find("delivery") or n:find("entrega") or n:find("sell") or n:find("drop") then
-            entrega = v
-            break
-        end
-    end
-end
-
 -- 🧠 AUTO SOLTAR
 game:GetService("RunService").Heartbeat:Connect(function()
     if entrega and #caixas > 0 then
         if (root.Position - entrega.Position).Magnitude <= 10 then
             soltar()
-            task.wait(1)
         end
     end
 end)
 
--- 🕊️ FLY
+-- 🕊️ FLY ATÉ PONTO
+local function flyTo(pos)
+    local bv = Instance.new("BodyVelocity", root)
+    bv.MaxForce = Vector3.new(9e9,9e9,9e9)
+
+    while (root.Position - pos).Magnitude > 5 do
+        bv.Velocity = (pos - root.Position).Unit * flySpeed
+        task.wait()
+    end
+
+    bv:Destroy()
+end
+
+-- 🤖 AUTO FARM LOOP
+task.spawn(function()
+    while true do
+        if autoFarm and pallet and entrega then
+            
+            -- IR PALLET
+            flyTo(pallet.Position)
+            task.wait(0.5)
+
+            pegarTudo()
+            task.wait(0.5)
+
+            -- IR ENTREGA
+            flyTo(entrega.Position)
+            task.wait(1)
+
+            soltar()
+            task.wait(1)
+
+            -- VOLTAR
+            flyTo(pallet.Position)
+            task.wait(1)
+        end
+
+        task.wait(0.2)
+    end
+end)
+
+-- 🕊️ FLY MANUAL
 local flying = false
-local flySpeed = 150
 local bv
 
 local UIS = game:GetService("UserInputService")
@@ -126,13 +172,21 @@ end
 -- UI
 
 MainTab:CreateButton({
-   Name = "📦 Pegar TODAS (Sem Travar)",
+   Name = "📦 Pegar Caixas",
    Callback = pegarTudo
 })
 
 MainTab:CreateButton({
    Name = "🗑️ Soltar Caixas",
    Callback = soltar
+})
+
+MainTab:CreateToggle({
+   Name = "🤖 Auto Farm",
+   CurrentValue = false,
+   Callback = function(v)
+       autoFarm = v
+   end
 })
 
 PlayerTab:CreateToggle({
@@ -151,7 +205,7 @@ PlayerTab:CreateSlider({
    Name = "🚀 Fly Speed",
    Range = {50, 600},
    Increment = 10,
-   CurrentValue = 150,
+   CurrentValue = 600,
    Callback = function(v)
        flySpeed = v
    end
