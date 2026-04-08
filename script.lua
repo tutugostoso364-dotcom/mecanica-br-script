@@ -4,7 +4,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "Mecânica BR - AUTO FARM",
    LoadingTitle = "Carregando...",
-   LoadingSubtitle = "Versão PRO",
+   LoadingSubtitle = "Versão FINAL",
 
    ConfigurationSaving = {
       Enabled = false,
@@ -32,7 +32,6 @@ local root = char:WaitForChild("HumanoidRootPart")
 
 -- VARIÁVEIS
 local caixas = {}
-local caixasSpawnadas = {}
 local autoFarm = false
 local flySpeed = 1000
 local noclip = false
@@ -55,33 +54,33 @@ for _, v in ipairs(workspace:GetDescendants()) do
     end
 end
 
--- DETECTAR SUAS CAIXAS
-workspace.DescendantAdded:Connect(function(v)
-    if v:IsA("BasePart") then
-        local nome = v.Name:lower()
-
-        if nome:find("box") or nome:find("caixa") then
-            task.wait(0.1)
-
-            if player.Character and root then
-                if (v.Position - root.Position).Magnitude <= 20 then
-                    table.insert(caixasSpawnadas, v)
-                end
-            end
-        end
-    end
-end)
-
--- PEGAR CAIXAS
+-- 📦 PEGAR ATÉ 20 CAIXAS
 local function pegarTudo()
     caixas = {}
 
-    for _, v in ipairs(caixasSpawnadas) do
-        if v and v.Parent then
-            if (v.Position - root.Position).Magnitude <= 25 then
-                v.Anchored = true
-                v.CanCollide = false
-                table.insert(caixas, v)
+    local count = 0
+
+    for _, v in ipairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            
+            local nome = v.Name:lower()
+
+            if nome:find("box") or nome:find("caixa") then
+                
+                local dist = (v.Position - root.Position).Magnitude
+
+                if dist <= 20 and v.Size.Magnitude < 15 then
+                    
+                    v.Anchored = true
+                    v.CanCollide = false
+
+                    table.insert(caixas, v)
+                    count += 1
+
+                    if count >= 20 then
+                        break
+                    end
+                end
             end
         end
     end
@@ -125,7 +124,7 @@ game:GetService("RunService").Stepped:Connect(function()
     end
 end)
 
--- FLY TO
+-- FLY ATÉ PONTO
 local function flyTo(pos)
     local bv = Instance.new("BodyVelocity", root)
     bv.MaxForce = Vector3.new(9e9,9e9,9e9)
@@ -142,6 +141,7 @@ end
 task.spawn(function()
     while true do
         if autoFarm and pallet and entrega then
+            
             noclip = true
 
             flyTo(pallet.Position)
@@ -199,8 +199,9 @@ local function fly()
 end
 
 -- UI
+
 MainTab:CreateButton({
-   Name = "📦 Pegar MINHAS Caixas",
+   Name = "📦 Pegar até 20 Caixas",
    Callback = pegarTudo
 })
 
