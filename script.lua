@@ -4,7 +4,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "Mecânica BR - AUTO FARM",
    LoadingTitle = "Carregando...",
-   LoadingSubtitle = "Versão Completa",
+   LoadingSubtitle = "Versão PRO",
 
    ConfigurationSaving = {
       Enabled = false,
@@ -32,8 +32,9 @@ local root = char:WaitForChild("HumanoidRootPart")
 
 -- VARIÁVEIS
 local caixas = {}
+local caixasSpawnadas = {}
 local autoFarm = false
-local flySpeed = 1000
+local flySpeed = 600
 local noclip = false
 
 local pallet = nil
@@ -44,7 +45,7 @@ for _, v in ipairs(workspace:GetDescendants()) do
     if v:IsA("BasePart") then
         local n = v.Name:lower()
 
-        if not pallet and (n:find("pallet") or n:find("box")) then
+        if not pallet and (n:find("pallet")) then
             pallet = v
         end
 
@@ -54,14 +55,36 @@ for _, v in ipairs(workspace:GetDescendants()) do
     end
 end
 
--- 📦 PEGAR CAIXAS
+-- 🔥 DETECTAR SUAS CAIXAS (SPAWN)
+workspace.DescendantAdded:Connect(function(v)
+    if v:IsA("BasePart") then
+        local nome = v.Name:lower()
+
+        if nome:find("box") or nome:find("caixa") then
+            
+            task.wait(0.1)
+
+            if player.Character and root then
+                local dist = (v.Position - root.Position).Magnitude
+                
+                if dist <= 20 then
+                    table.insert(caixasSpawnadas, v)
+                end
+            end
+        end
+    end
+end)
+
+-- 📦 PEGAR SÓ SUAS CAIXAS
 local function pegarTudo()
     caixas = {}
 
-    for _, v in ipairs(workspace:GetDescendants()) do
-        if v:IsA("BasePart") and (v.Name:lower():find("box") or v.Name:lower():find("caixa")) then
+    for _, v in ipairs(caixasSpawnadas) do
+        if v and v.Parent then
             
-            if (v.Position - root.Position).Magnitude <= 20 then
+            local dist = (v.Position - root.Position).Magnitude
+            
+            if dist <= 25 then
                 v.Anchored = true
                 v.CanCollide = false
                 table.insert(caixas, v)
@@ -188,7 +211,7 @@ end
 -- UI
 
 MainTab:CreateButton({
-   Name = "📦 Pegar Caixas",
+   Name = "📦 Pegar MINHAS Caixas",
    Callback = pegarTudo
 })
 
@@ -219,9 +242,9 @@ PlayerTab:CreateToggle({
 
 PlayerTab:CreateSlider({
    Name = "🚀 Fly Speed",
-   Range = {50, 1000},
+   Range = {50, 600},
    Increment = 10,
-   CurrentValue = 1000,
+   CurrentValue = 600,
    Callback = function(v)
        flySpeed = v
    end
