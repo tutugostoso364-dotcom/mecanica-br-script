@@ -33,7 +33,7 @@ local root = char:WaitForChild("HumanoidRootPart")
 -- VARIÁVEIS
 local caixas = {}
 local autoFarm = false
-local flySpeed = 1000
+local flySpeed = 2000
 local noclip = false
 
 local pallet = nil
@@ -232,9 +232,9 @@ PlayerTab:CreateToggle({
 
 PlayerTab:CreateSlider({
    Name = "🚀 Fly Speed",
-   Range = {50, 1000},
+   Range = {50, 2000},
    Increment = 50,
-   CurrentValue = 1000,
+   CurrentValue = 2000,
    Callback = function(v)
        flySpeed = v
    end
