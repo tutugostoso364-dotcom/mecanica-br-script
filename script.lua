@@ -40,12 +40,12 @@ local noclip = false
 local pallet = nil
 local entrega = nil
 
--- 🔍 DETECTAR LOCAIS
+-- DETECTAR LOCAIS
 for _, v in ipairs(workspace:GetDescendants()) do
     if v:IsA("BasePart") then
         local n = v.Name:lower()
 
-        if not pallet and (n:find("pallet")) then
+        if not pallet and n:find("pallet") then
             pallet = v
         end
 
@@ -55,19 +55,16 @@ for _, v in ipairs(workspace:GetDescendants()) do
     end
 end
 
--- 🔥 DETECTAR SUAS CAIXAS (SPAWN)
+-- DETECTAR SUAS CAIXAS
 workspace.DescendantAdded:Connect(function(v)
     if v:IsA("BasePart") then
         local nome = v.Name:lower()
 
         if nome:find("box") or nome:find("caixa") then
-            
             task.wait(0.1)
 
             if player.Character and root then
-                local dist = (v.Position - root.Position).Magnitude
-                
-                if dist <= 20 then
+                if (v.Position - root.Position).Magnitude <= 20 then
                     table.insert(caixasSpawnadas, v)
                 end
             end
@@ -75,16 +72,13 @@ workspace.DescendantAdded:Connect(function(v)
     end
 end)
 
--- 📦 PEGAR SÓ SUAS CAIXAS
+-- PEGAR CAIXAS
 local function pegarTudo()
     caixas = {}
 
     for _, v in ipairs(caixasSpawnadas) do
         if v and v.Parent then
-            
-            local dist = (v.Position - root.Position).Magnitude
-            
-            if dist <= 25 then
+            if (v.Position - root.Position).Magnitude <= 25 then
                 v.Anchored = true
                 v.CanCollide = false
                 table.insert(caixas, v)
@@ -93,7 +87,7 @@ local function pegarTudo()
     end
 end
 
--- 🔄 SEGURAR CAIXAS
+-- SEGURAR CAIXAS
 game:GetService("RunService").RenderStepped:Connect(function()
     for i, v in ipairs(caixas) do
         local x = (i % 4) * 2 - 3
@@ -102,7 +96,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- 🗑️ SOLTAR
+-- SOLTAR
 local function soltar()
     for _, v in ipairs(caixas) do
         v.Anchored = false
@@ -111,7 +105,7 @@ local function soltar()
     caixas = {}
 end
 
--- 🧠 AUTO SOLTAR
+-- AUTO SOLTAR
 game:GetService("RunService").Heartbeat:Connect(function()
     if entrega and #caixas > 0 then
         if (root.Position - entrega.Position).Magnitude <= 10 then
@@ -120,7 +114,7 @@ game:GetService("RunService").Heartbeat:Connect(function()
     end
 end)
 
--- 🚀 NOCLIP
+-- NOCLIP
 game:GetService("RunService").Stepped:Connect(function()
     if noclip and player.Character then
         for _, v in pairs(player.Character:GetDescendants()) do
@@ -131,7 +125,7 @@ game:GetService("RunService").Stepped:Connect(function()
     end
 end)
 
--- 🕊️ FLY ATÉ PONTO
+-- FLY TO
 local function flyTo(pos)
     local bv = Instance.new("BodyVelocity", root)
     bv.MaxForce = Vector3.new(9e9,9e9,9e9)
@@ -144,28 +138,24 @@ local function flyTo(pos)
     bv:Destroy()
 end
 
--- 🤖 AUTO FARM LOOP
+-- AUTO FARM
 task.spawn(function()
     while true do
         if autoFarm and pallet and entrega then
-            
             noclip = true
 
-            -- IR PALLET
             flyTo(pallet.Position)
             task.wait(0.5)
 
             pegarTudo()
             task.wait(0.5)
 
-            -- IR ENTREGA
             flyTo(entrega.Position)
             task.wait(1)
 
             soltar()
             task.wait(1)
 
-            -- VOLTAR
             flyTo(pallet.Position)
             task.wait(1)
         else
@@ -176,7 +166,7 @@ task.spawn(function()
     end
 end)
 
--- 🕊️ FLY MANUAL
+-- FLY MANUAL
 local flying = false
 local bv
 
@@ -209,7 +199,6 @@ local function fly()
 end
 
 -- UI
-
 MainTab:CreateButton({
    Name = "📦 Pegar MINHAS Caixas",
    Callback = pegarTudo
@@ -243,7 +232,7 @@ PlayerTab:CreateToggle({
 PlayerTab:CreateSlider({
    Name = "🚀 Fly Speed",
    Range = {50, 1000},
-   Increment = 10,
+   Increment = 50,
    CurrentValue = 1000,
    Callback = function(v)
        flySpeed = v
