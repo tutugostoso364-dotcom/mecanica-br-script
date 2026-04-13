@@ -24,6 +24,7 @@ local Window = Rayfield:CreateWindow({
 
 local MainTab = Window:CreateTab("Caixas", 4483362458)
 local PlayerTab = Window:CreateTab("Player", 4483362458)
+local TeleportTab = Window:CreateTab("Teleporte", 4483362458)
 
 -- PLAYER
 local player = game.Players.LocalPlayer
@@ -57,7 +58,6 @@ end
 -- 📦 PEGAR ATÉ 20 CAIXAS
 local function pegarTudo()
     caixas = {}
-
     local count = 0
 
     for _, v in ipairs(workspace:GetDescendants()) do
@@ -197,6 +197,14 @@ local function fly()
         end
     end)
 end
+
+-- 🚀 TELEPORT
+TeleportTab:CreateButton({
+   Name = "📍 Teleportar para ponto",
+   Callback = function()
+       root.CFrame = CFrame.new(-25678.73, 32.98, -5880.50)
+   end
+})
 
 -- UI
 
