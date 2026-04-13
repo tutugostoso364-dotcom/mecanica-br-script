@@ -2,9 +2,9 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Mecânica BR - AUTO FARM",
+   Name = "Mecânica BR - MONEY",
    LoadingTitle = "Carregando...",
-   LoadingSubtitle = "Versão FINAL",
+   LoadingSubtitle = "Versão 3.0",
 
    ConfigurationSaving = {
       Enabled = false,
