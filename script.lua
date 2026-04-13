@@ -200,7 +200,7 @@ end
 
 -- 🚀 TELEPORT
 TeleportTab:CreateButton({
-   Name = "📍 Teleportar para ponto",
+   Name = "📍 Teleportar para CLT",
    Callback = function()
        root.CFrame = CFrame.new(-25678.73, 32.98, -5880.50)
    end
