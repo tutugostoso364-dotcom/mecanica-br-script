@@ -18,7 +18,7 @@ local Window = Rayfield:CreateWindow({
       FileName = "MecanicaBR_Key",
       SaveKey = false,
       GrabKeyFromSite = false,
-      Key = {"usuario.2026"}
+      Key = {"deathpro.1"}
    }
 })
 
@@ -62,24 +62,19 @@ local function pegarTudo()
 
     for _, v in ipairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") then
-            
             local nome = v.Name:lower()
 
             if nome:find("box") or nome:find("caixa") then
-                
                 local dist = (v.Position - root.Position).Magnitude
 
                 if dist <= 20 and v.Size.Magnitude < 15 then
-                    
                     v.Anchored = true
                     v.CanCollide = false
 
                     table.insert(caixas, v)
                     count += 1
 
-                    if count >= 20 then
-                        break
-                    end
+                    if count >= 20 then break end
                 end
             end
         end
@@ -198,16 +193,64 @@ local function fly()
     end)
 end
 
--- 🚀 TELEPORT
+-- 🚀 TELEPORTES COMPLETOS
 TeleportTab:CreateButton({
-   Name = "📍 Teleportar para CLT",
+   Name = "📍 Ferro Velho",
+   Callback = function()
+       root.CFrame = CFrame.new(-3126.20, 65.67, -4255.02)
+   end
+})
+
+TeleportTab:CreateButton({
+   Name = "🔧 Auto Peças",
+   Callback = function()
+       root.CFrame = CFrame.new(-3330.96, 65.69, -3409.76)
+   end
+})
+
+TeleportTab:CreateButton({
+   Name = "🏁 Drag Race",
+   Callback = function()
+       root.CFrame = CFrame.new(-3859.01, 64.81, -4896.45)
+   end
+})
+
+TeleportTab:CreateButton({
+   Name = "🏗️ Construção Metrópole",
+   Callback = function()
+       root.CFrame = CFrame.new(-3645.61, 65.17, -2509.00)
+   end
+})
+
+TeleportTab:CreateButton({
+   Name = "🏗️ Construção (Cidade 2)",
+   Callback = function()
+       root.CFrame = CFrame.new(-25216.50, 65.01, -5291.26)
+   end
+})
+
+TeleportTab:CreateButton({
+   Name = "⛽ Posto Metrópole",
+   Callback = function()
+       root.CFrame = CFrame.new(-3222.83, 66.07, -3708.20)
+   end
+})
+
+TeleportTab:CreateButton({
+   Name = "🚗 Concessionária",
+   Callback = function()
+       root.CFrame = CFrame.new(-3040.08, 65.49, -3697.70)
+   end
+})
+
+TeleportTab:CreateButton({
+   Name = "🕵️ Ponto Secreto",
    Callback = function()
        root.CFrame = CFrame.new(-25678.73, 32.98, -5880.50)
    end
 })
 
 -- UI
-
 MainTab:CreateButton({
    Name = "📦 Pegar até 20 Caixas",
    Callback = pegarTudo
